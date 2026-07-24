@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <title>Arc Sidebar API Patcher</title>
+    <link rel="stylesheet" href="options.css" />
+  </head>
+  <body>
+    <header>
+      <h1>Arc Sidebar API Patcher</h1>
+      <p class="subtitle">Patches installed extensions that rely on <code>chrome.sidePanel</code>, which Arc doesn't implement.</p>
+      <p id="status" class="status">Connecting to native host&hellip;</p>
+    </header>
+
+    <main>
+      <section id="needs-patch-section">
+        <h2>Uses chrome.sidePanel</h2>
+        <ul id="needs-patch-list" class="extension-list"></ul>
+        <p id="needs-patch-empty" class="empty-state" hidden>None of your installed extensions use chrome.sidePanel.</p>
+      </section>
+
+      <details id="other-section">
+        <summary>Other installed extensions</summary>
+        <ul id="other-list" class="extension-list"></ul>
+      </details>
+    </main>
+
+    <template id="extension-row-template">
+      <li class="extension-row">
+        <img class="extension-icon" alt="" />
+        <div class="extension-info">
+          <div class="extension-name"></div>
+          <div class="extension-version"></div>
+        </div>
+        <div class="extension-actions">
+          <button class="patch-button">Patch</button>
+          <div class="patch-result" hidden>
+            <p class="patch-result-text"></p>
+            <button class="reveal-button">Reveal in Finder</button>
+            <ol class="next-steps">
+              <li>Open <code>arc://extensions</code> and enable Developer Mode</li>
+              <li>Click "Load Unpacked" and select the revealed folder</li>
+              <li>Disable the original (unpatched) extension to avoid duplicates</li>
+            </ol>
+          </div>
+          <p class="patch-error" hidden></p>
+        </div>
+      </li>
+    </template>
+
+    <script src="options.js"></script>
+  </body>
+</html>

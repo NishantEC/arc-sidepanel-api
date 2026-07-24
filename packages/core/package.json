@@ -1,0 +1,14 @@
+{
+  "name": "@arc-sidebar-api/core",
+  "version": "0.1.0",
+  "description": "Detects and patches chrome.sidePanel usage in MV3 extensions so they run in Arc",
+  "license": "MIT",
+  "main": "src/index.js",
+  "type": "commonjs",
+  "scripts": {
+    "test": "node --test test/*.test.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}

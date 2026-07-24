@@ -1,0 +1,19 @@
+{
+  "name": "arc-sidebar-api",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Bring chrome.sidePanel support to Arc browser extensions that need it",
+  "license": "MIT",
+  "workspaces": [
+    "packages/core",
+    "packages/native-host",
+    "packages/extension"
+  ],
+  "scripts": {
+    "test": "npm test --workspace packages/core && npm test --workspace packages/native-host",
+    "lint": "node --check packages/core/src/*.js && node --check packages/native-host/src/*.js"
+  },
+  "engines": {
+    "node": ">=18"
+  }
+}
