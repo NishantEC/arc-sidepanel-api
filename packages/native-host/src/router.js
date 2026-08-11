@@ -35,8 +35,17 @@ function handleMessage(message, { outputRoot = DEFAULT_OUTPUT_ROOT, openInFinder
           return { type: 'patch-error', id: message.id, error: `No installed extension found with id ${message.id}` };
         }
         const outputDir = path.join(outputRoot, `${slugify(target.name)}-${target.id}`);
-        const result = core.patchExtension({ sourceDir: target.dir, outputDir });
-        return { type: 'patch-result', id: message.id, outputDir: result.outputDir };
+        const result = core.patchExtension({
+          sourceDir: target.dir,
+          outputDir,
+          panelMode: message.panelMode,
+        });
+        return {
+          type: 'patch-result',
+          id: message.id,
+          outputDir: result.outputDir,
+          panelMode: result.panelMode,
+        };
       } catch (err) {
         return { type: 'patch-error', id: message.id, error: err.message };
       }

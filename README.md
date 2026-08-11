@@ -9,6 +9,23 @@ This project patches those extensions so they work anyway, via a floating
 docked panel instead of a native side panel, and gives you a settings-page UI
 inside Arc to do it with one click instead of hand-editing files.
 
+## Panel styles
+
+Pick one per extension when you patch it:
+
+- **Overlay** (default) - a docked iframe drawn on the page. Works on any page
+  a content script can reach, follows you between tabs, costs no tab. But it
+  lives in the page's DOM, so navigating away closes it, and a site with a
+  strict `frame-src` CSP can block it.
+- **Split tab** - the panel page opened as a real browser tab. Drag it into an
+  Arc split once and Arc remembers the layout per space. It survives
+  navigation, resizes with Arc's own divider, and no page CSP can touch it.
+  Costs a tab, and needs that one manual drag.
+
+Arc's Split View is native Arc UI with no extension API behind it, so nothing
+here can trigger the split for you - split-tab mode just gives Arc a real tab
+to split with.
+
 ## How it works
 
 Three pieces:
@@ -16,9 +33,26 @@ Three pieces:
 - **`packages/core`** - the patch engine. Given any installed extension, it
   detects `chrome.sidePanel` usage from the manifest, copies the extension
   (never touching the original), and injects:
-  - a content script that renders a docked, closable iframe panel on the page
   - a service worker shim that intercepts `chrome.sidePanel.*` calls and
-    routes them to that panel
+    routes them to whichever panel style you chose
+  - **overlay mode**: a content script that renders the docked, closable
+    iframe, plus a `web_accessible_resources` entry for the side panel page -
+    without which the browser blocks the iframe outright (extensions that only
+    ever used the native side panel have no reason to declare one)
+  - **split-tab mode**: a script injected into the side panel page that keeps
+    `chrome.tabs.query({active: true, ...})` resolving to the tab in the other
+    pane, since the panel is now a tab itself and would otherwise answer with
+    its own id. The `tabId` query param is stripped from the panel URL for the
+    same reason - extensions read it once at mount, which goes stale the moment
+    you navigate the other pane
+  - a keyboard shortcut, but only if a chord is free - Chrome silently drops a
+    `suggested_key` that collides with one the extension already declares. The
+    extension's own shortcut is made to toggle rather than only open, matching
+    what the native side panel does
+  - an in-memory `chrome.tabGroups` emulation, for extensions that declare the
+    `tabGroups` permission. Arc exposes the tab-groups API but
+    `chrome.tabs.group()` never settles, so anything routed through it hangs
+    forever rather than failing
 - **`packages/native-host`** - a small Node process registered as a
   [Chrome Native Messaging host](https://developer.chrome.com/docs/apps/nativeMessaging/).
   This is the only piece with filesystem access - it's what actually reads
@@ -78,7 +112,13 @@ Then in Arc:
 - **No auto-update.** A patched, unpacked copy doesn't pull updates from the
   Chrome Web Store. Re-run the patch against the newer installed version when
   you want to update.
-- **Cosmetic isolation, not pixel-perfect.** The floating panel resets most
+- **Overlay mode: sites with a strict `frame-src` CSP.** The panel is an
+  iframe on the host page, so a page whose Content-Security-Policy forbids
+  `chrome-extension:` frames won't show it. Use split-tab mode there.
+- **Overlay mode: the panel closes on navigation.** It lives in the page's
+  DOM, so a page load takes it with it. Split-tab mode doesn't have this
+  problem.
+- **Cosmetic isolation, not pixel-perfect.** The overlay panel resets most
   inherited page styles but isn't rendered in a Shadow DOM yet, so pages with
   unusual global CSS could still leak into it occasionally.
 - **The extension ID for allowed_origins is hardcoded** to the key checked

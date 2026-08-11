@@ -33,6 +33,13 @@
           <div class="extension-version"></div>
         </div>
         <div class="extension-actions">
+          <label class="panel-mode">
+            Panel style
+            <select class="panel-mode-select">
+              <option value="overlay" selected>Overlay &mdash; docked panel on the page</option>
+              <option value="split-tab">Split tab &mdash; own tab, for Arc split view</option>
+            </select>
+          </label>
           <button class="patch-button">Patch</button>
           <div class="patch-result" hidden>
             <p class="patch-result-text"></p>
@@ -41,6 +48,7 @@
               <li>Open <code>arc://extensions</code> and enable Developer Mode</li>
               <li>Click "Load Unpacked" and select the revealed folder</li>
               <li>Disable the original (unpatched) extension to avoid duplicates</li>
+              <li class="split-tab-step" hidden>Open the panel once, then drag its tab into a split &mdash; Arc remembers the layout per space</li>
             </ol>
           </div>
           <p class="patch-error" hidden></p>

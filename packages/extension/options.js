@@ -31,25 +31,31 @@ function renderRow(ext, listEl, { actionable }) {
   node.querySelector('.extension-version').textContent = `v${ext.version}`;
 
   const patchButton = node.querySelector('.patch-button');
+  const panelModeLabel = node.querySelector('.panel-mode');
+  const panelModeSelect = node.querySelector('.panel-mode-select');
   const resultBox = node.querySelector('.patch-result');
   const resultText = node.querySelector('.patch-result-text');
   const revealButton = node.querySelector('.reveal-button');
+  const splitTabStep = node.querySelector('.split-tab-step');
   const errorBox = node.querySelector('.patch-error');
 
   if (!actionable) {
     patchButton.remove();
+    panelModeLabel.remove();
   } else {
     patchButton.addEventListener('click', () => {
       patchButton.disabled = true;
       patchButton.textContent = 'Patching…';
       errorBox.hidden = true;
-      port.postMessage({ type: 'patch', id: ext.id });
+      port.postMessage({ type: 'patch', id: ext.id, panelMode: panelModeSelect.value });
     });
   }
 
-  li.updateWithResult = (outputDir) => {
+  li.updateWithResult = (outputDir, panelMode) => {
     patchButton.hidden = true;
+    panelModeLabel.hidden = true;
     resultBox.hidden = false;
+    splitTabStep.hidden = panelMode !== 'split-tab';
     resultText.textContent = `Patched: ${outputDir}`;
     revealButton.addEventListener('click', () => {
       port.postMessage({ type: 'reveal', path: outputDir });
@@ -99,7 +105,7 @@ function connect() {
 
       case 'patch-result': {
         const row = findRow(message.id);
-        if (row) row.updateWithResult(message.outputDir);
+        if (row) row.updateWithResult(message.outputDir, message.panelMode);
         break;
       }
 
