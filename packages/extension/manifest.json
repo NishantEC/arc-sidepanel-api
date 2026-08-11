@@ -1,6 +1,6 @@
 {
   "manifest_version": 3,
-  "name": "Arc Sidebar API Patcher",
+  "name": "Arc SidePanel API Patcher",
   "version": "0.1.0",
   "description": "Lists installed Arc extensions that rely on chrome.sidePanel and patches them to run via a floating panel instead.",
   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAqlROiRAhKsrkLu7M4ZfjkabFUl7Bkh3QJEQYIB3fy3MQe0boZV0Oehu2SBfh1YJEAW0O5JKRnu64Y3VSiIOBU8n6MwH7PWo+FV4zBBeN1+e6SQkyFvgBJZ8touNQmNjy/coqgHu3Yz6DMVpUQ6AtC5tK2B9D28avlJvMEtnIgi+UK2RdoqDlD/g1XO0xRgvvcKNRZaWnWRJl5rtlhHA3KpDhicp1pHbBCMNy6WRvhzF9aZxFLefd9wO585C+JRj79aLhVpyO7sE0tsMJqvo7BvR/CB5FO7Zo5iyJonu3a4ju0GBaU2tbRvxWuqAe2PN00YgNWN375MfHDzTgXvwoXwIDAQAB",
@@ -9,7 +9,7 @@
     "service_worker": "background.js"
   },
   "action": {
-    "default_title": "Arc Sidebar API Patcher"
+    "default_title": "Arc SidePanel API Patcher"
   },
   "options_page": "options.html"
 }

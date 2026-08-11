@@ -1,8 +1,8 @@
-# arc-sidebar-api
+# arc-sidepanel-api
 
 Arc browser doesn't implement `chrome.sidePanel`, so any Chrome extension that
 uses it (Claude, CSS Peeper, and many others) silently breaks - the icon
-click does nothing, because Arc has no sidebar surface for extensions to
+click does nothing, because Arc has no side panel surface for extensions to
 render into and has said it doesn't plan to add one.
 
 This project patches those extensions so they work anyway, via a floating
@@ -50,8 +50,8 @@ macOS only for now (Windows/Linux Arc native-messaging paths aren't wired up
 yet - see [Limitations](#limitations)).
 
 ```sh
-git clone https://github.com/NishantEC/arc-sidebar-api.git
-cd arc-sidebar-api
+git clone https://github.com/NishantEC/arc-sidepanel-api.git
+cd arc-sidepanel-api
 npm install
 ./packages/native-host/install.sh
 ```

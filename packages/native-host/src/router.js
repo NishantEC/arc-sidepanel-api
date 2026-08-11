@@ -3,10 +3,10 @@
 const os = require('node:os');
 const path = require('node:path');
 const { execFile } = require('node:child_process');
-const core = require('@arc-sidebar-api/core');
+const core = require('@arc-sidepanel-api/core');
 const { version } = require('../package.json');
 
-const DEFAULT_OUTPUT_ROOT = path.join(os.homedir(), 'Library', 'Application Support', 'arc-sidebar-api', 'patched');
+const DEFAULT_OUTPUT_ROOT = path.join(os.homedir(), 'Library', 'Application Support', 'arc-sidepanel-api', 'patched');
 
 function slugify(name) {
   return name.replace(/[^a-z0-9-]+/gi, '-').replace(/^-+|-+$/g, '') || 'extension';

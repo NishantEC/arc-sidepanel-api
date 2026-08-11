@@ -1,6 +1,6 @@
 'use strict';
 
-// Injected by arc-sidebar-api. Renders the extension's side-panel page as a
+// Injected by arc-sidepanel-api. Renders the extension's side-panel page as a
 // docked floating panel, since Arc does not implement chrome.sidePanel.
 
 const HOST_ID = '__arc_sidepanel_host__';

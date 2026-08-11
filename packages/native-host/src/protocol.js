@@ -16,7 +16,7 @@ function readMessages(stdin, onMessage) {
       try {
         onMessage(JSON.parse(body.toString('utf8')));
       } catch (err) {
-        process.stderr.write(`arc-sidebar-api host: failed to parse message: ${err.message}\n`);
+        process.stderr.write(`arc-sidepanel-api host: failed to parse message: ${err.message}\n`);
       }
     }
   });

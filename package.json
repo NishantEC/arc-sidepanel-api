@@ -1,5 +1,5 @@
 {
-  "name": "arc-sidebar-api",
+  "name": "arc-sidepanel-api",
   "version": "0.1.0",
   "private": true,
   "description": "Bring chrome.sidePanel support to Arc browser extensions that need it",

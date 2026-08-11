@@ -5,7 +5,10 @@ const path = require('path');
 const { detectSidePanelUsage } = require('./detect');
 
 const TEMPLATES_DIR = path.join(__dirname, '..', 'templates');
-const POLYFILL_DIR = '_arc_polyfill';
+// Must not start with "_" - Chromium's "Load Unpacked" refuses any unpacked
+// extension containing a top-level file or directory with a leading
+// underscore (those names are reserved for the system/CRX metadata).
+const POLYFILL_DIR = 'arc_polyfill';
 
 function readManifest(extensionDir) {
   const manifestPath = path.join(extensionDir, 'manifest.json');

@@ -1,6 +1,6 @@
 'use strict';
 
-const HOST_NAME = 'com.arc_sidebar_api.host';
+const HOST_NAME = 'com.arc_sidepanel_api.host';
 const rowTemplate = document.getElementById('extension-row-template');
 const statusEl = document.getElementById('status');
 const needsPatchList = document.getElementById('needs-patch-list');

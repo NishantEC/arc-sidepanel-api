@@ -1,11 +1,16 @@
 'use strict';
 
-// Injected by arc-sidebar-api. Polyfills chrome.sidePanel by routing calls to
+// Injected by arc-sidepanel-api. Polyfills chrome.sidePanel by routing calls to
 // the floating-panel.js content script, since Arc does not implement the
-// native API. Only activates if chrome.sidePanel isn't already present, so a
-// build patched by this tool still behaves natively in a real Chromium build.
-
-if (!chrome.sidePanel) {
+// native API. Arc does define real `chrome.sidePanel.open`/`setOptions`
+// functions (they satisfy `typeof === 'function'`) - they just don't render
+// any UI when called, since Arc has no side panel surface. That makes
+// feature-detecting "does it actually work" from a service worker
+// unreliable, so this always installs the polyfill unconditionally: this
+// tool is only ever run in a browser where the caller already knows native
+// chrome.sidePanel doesn't work, and the floating panel it installs behaves
+// correctly even in a browser where the native API would have worked too.
+{
   const perTabOptions = new Map();
   let globalOptions = { path: null, enabled: true };
   const panelBehavior = { openPanelOnActionClick: false };
@@ -72,9 +77,4 @@ if (!chrome.sidePanel) {
       await sendToTab(tabId, { type: 'ARC_SIDEPANEL_TOGGLE' });
     });
   }
-} else {
-  console.warn(
-    '[arc-sidebar-api] chrome.sidePanel already exists in this browser; not overriding it. ' +
-      'If it exists but does not work, please open an issue.'
-  );
 }

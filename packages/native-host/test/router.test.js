@@ -36,7 +36,7 @@ test('reveal shells out to `open -R` and returns nothing', () => {
 });
 
 test('patch writes a patched copy for a matching installed extension', (t) => {
-  const extensionsDir = fs.mkdtempSync(path.join(os.tmpdir(), 'arc-sidebar-api-native-host-'));
+  const extensionsDir = fs.mkdtempSync(path.join(os.tmpdir(), 'arc-sidepanel-api-native-host-'));
   const extDir = path.join(extensionsDir, 'abcId', '1.0.0');
   fs.mkdirSync(extDir, { recursive: true });
   fs.writeFileSync(
@@ -52,11 +52,11 @@ test('patch writes a patched copy for a matching installed extension', (t) => {
   fs.writeFileSync(path.join(extDir, 'bg.js'), '', 'utf8');
   fs.writeFileSync(path.join(extDir, 'panel.html'), '', 'utf8');
 
-  t.mock.method(require('@arc-sidebar-api/core'), 'listInstalledExtensions', () => [
+  t.mock.method(require('@arc-sidepanel-api/core'), 'listInstalledExtensions', () => [
     { id: 'abcId', version: '1.0.0', dir: extDir, name: 'Test Ext', usesSidePanel: true, defaultPath: 'panel.html', reasons: [] },
   ]);
 
-  const outputRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'arc-sidebar-api-output-root-'));
+  const outputRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'arc-sidepanel-api-output-root-'));
   const response = handleMessage({ type: 'patch', id: 'abcId' }, { outputRoot });
 
   assert.equal(response.type, 'patch-result');

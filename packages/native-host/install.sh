@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# Registers the arc-sidebar-api native messaging host so the browser
+# Registers the arc-sidepanel-api native messaging host so the browser
 # extension can ask it to read/patch installed extensions on disk.
 # macOS only for now - see README for the Windows/Linux tracking issue.
 
-HOST_NAME="com.arc_sidebar_api.host"
+HOST_NAME="com.arc_sidepanel_api.host"
 # Must match the ID derived from the "key" pinned in packages/extension/manifest.json
 # (see scripts/generate-extension-key.js for how that pairing works).
 EXTENSION_ID="gpconahgokadiigbigonmlelgihbecel"
@@ -29,7 +29,7 @@ chmod +x "$HOST_ENTRY"
 MANIFEST_JSON=$(cat <<JSON
 {
   "name": "$HOST_NAME",
-  "description": "arc-sidebar-api native host - patches chrome.sidePanel usage into Arc-compatible extensions",
+  "description": "arc-sidepanel-api native host - patches chrome.sidePanel usage into Arc-compatible extensions",
   "path": "$HOST_ENTRY",
   "type": "stdio",
   "allowed_origins": ["chrome-extension://$EXTENSION_ID/"]
