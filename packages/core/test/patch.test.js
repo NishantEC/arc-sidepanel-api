@@ -223,9 +223,23 @@ test('split-tab injection lands before the page bundle and is idempotent', () =>
   patchExtension({ sourceDir, outputDir: out, panelMode: 'split-tab' });
   const html = fs.readFileSync(path.join(out, 'sidepanel.html'), 'utf8');
   assert.ok(html.indexOf('panel-tabs-patch.js') < html.indexOf('/bundle.js'));
+  assert.equal(html.match(/panel-tabs-patch\.js/g).length, 1);
+});
 
-  // re-patching the already-patched output must not stack a second tag
-  patchExtension({ sourceDir: out, outputDir: outputDir(), panelMode: 'split-tab' });
+test('split-tab injection does not stack a second tag on a page that already has one', () => {
+  const sourceDir = makeFixture();
+  fs.writeFileSync(
+    path.join(sourceDir, 'sidepanel.html'),
+    '<!doctype html><html><head><script src="/arc_polyfill/panel-tabs-patch.js"></script>' +
+      '<script type="module" src="/bundle.js"></script></head><body></body></html>',
+    'utf8'
+  );
+  const out = outputDir();
+
+  const { patchedPages } = patchExtension({ sourceDir, outputDir: out, panelMode: 'split-tab' });
+
+  assert.deepEqual(patchedPages, ['sidepanel.html']);
+  const html = fs.readFileSync(path.join(out, 'sidepanel.html'), 'utf8');
   assert.equal(html.match(/panel-tabs-patch\.js/g).length, 1);
 });
 
@@ -275,4 +289,16 @@ test('throws for non-MV3 manifests', () => {
 
   const out = outputDir();
   assert.throws(() => patchExtension({ sourceDir, outputDir: out }), /Only Manifest V3/);
+});
+
+test('refuses to patch an already-patched copy', () => {
+  const sourceDir = makeFixture();
+  const once = outputDir();
+  patchExtension({ sourceDir, outputDir: once });
+
+  // Patching the output again would generate an entry that importScripts itself.
+  assert.throws(
+    () => patchExtension({ sourceDir: once, outputDir: outputDir() }),
+    /already an arc-patched extension/
+  );
 });

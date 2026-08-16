@@ -83,6 +83,14 @@
 
   const isPanelTab = (tabId) => hostByPanel.has(tabId);
 
+  async function panelForHostTab(hostTabId) {
+    try {
+      return panelByWindow.get((await nativeGet(hostTabId)).windowId) ?? null;
+    } catch {
+      return null;
+    }
+  }
+
   async function tabExists(tabId) {
     try {
       await nativeGet(tabId);
@@ -207,14 +215,39 @@
 
   const impl = {
     async setOptions(options = {}) {
+      const enabled = options.enabled ?? true;
+      let tabId = null;
+
       if (options.tabId != null) {
         // Key by the page, not the panel: extensions call this with whatever
         // tab was active, which may be the panel itself.
-        const tabId = await resolveHostTab(options.tabId);
-        perTabOptions.set(tabId, { path: options.path, enabled: options.enabled ?? true });
+        tabId = await resolveHostTab(options.tabId);
+        perTabOptions.set(tabId, { path: options.path, enabled });
       } else {
-        globalOptions = { path: options.path, enabled: options.enabled ?? true };
+        globalOptions = { path: options.path, enabled };
       }
+
+      // setOptions({enabled: false}) is how an extension dismisses the native
+      // side panel - Sider closes its panel this way rather than by calling a
+      // close method, because chrome.sidePanel has none. Recording the flag is
+      // not enough; the panel has to actually go away.
+      if (enabled) return;
+      const target = tabId ?? (await activeTabId());
+      if (target == null) return;
+
+      if (MODE === 'split-tab') {
+        await ready;
+        const panelTabId = await panelForHostTab(target);
+        if (panelTabId != null) {
+          try {
+            await chrome.tabs.remove(panelTabId);
+          } catch {
+            // already gone
+          }
+        }
+        return;
+      }
+      await sendToTab(target, { type: 'ARC_SIDEPANEL_CLOSE' });
     },
 
     async getOptions(options = {}) {

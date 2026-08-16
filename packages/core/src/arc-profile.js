@@ -3,7 +3,7 @@
 const fs = require('fs');
 const os = require('os');
 const path = require('path');
-const { detectSidePanelUsage } = require('./detect');
+const { detectSidePanelUsage, detectOwnInPageUI } = require('./detect');
 
 /**
  * Arc's on-disk extension profile paths, by platform. Arc follows the same
@@ -65,12 +65,20 @@ function listInstalledExtensions({ extensionsDir = getArcExtensionsDir() } = {})
       continue;
     }
 
+    const detection = detectSidePanelUsage(manifest);
+    // Scanning content-script bundles is the expensive part, so only do it for
+    // the extensions we would actually offer to patch.
+    const ownUI = detection.usesSidePanel
+      ? detectOwnInPageUI(extDir, manifest)
+      : { likelyHasOwnPanel: false, embeddedPages: [], broadScriptBytes: 0, reasons: [] };
+
     results.push({
       id,
       version,
       dir: extDir,
       name: resolveLocalizedName(manifest, extDir),
-      ...detectSidePanelUsage(manifest),
+      ...detection,
+      ownInPageUI: ownUI,
     });
   }
   return results;

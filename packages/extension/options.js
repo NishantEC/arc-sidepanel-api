@@ -30,6 +30,17 @@ function renderRow(ext, listEl, { actionable }) {
   node.querySelector('.extension-name').textContent = ext.name;
   node.querySelector('.extension-version').textContent = `v${ext.version}`;
 
+  // Extensions like Sider ship their own in-page panel alongside the native
+  // one. Those already work in Arc, so say so before offering to patch.
+  const ownUiNote = node.querySelector('.own-ui-note');
+  if (actionable && ext.ownInPageUI && ext.ownInPageUI.likelyHasOwnPanel) {
+    ownUiNote.hidden = false;
+    ownUiNote.textContent =
+      'Already renders its own panel inside the page, so it probably works in Arc ' +
+      `without patching (${ext.ownInPageUI.reasons[0]}). Check the extension's own ` +
+      'display-mode setting first.';
+  }
+
   const patchButton = node.querySelector('.patch-button');
   const panelModeLabel = node.querySelector('.panel-mode');
   const panelModeSelect = node.querySelector('.panel-mode-select');

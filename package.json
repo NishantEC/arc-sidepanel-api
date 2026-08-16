@@ -11,7 +11,7 @@
   ],
   "scripts": {
     "test": "npm test --workspace packages/core && npm test --workspace packages/native-host",
-    "lint": "node --check packages/core/src/*.js && node --check packages/native-host/src/*.js"
+    "lint": "node --check packages/core/src/*.js && node --check packages/core/templates/*.js && node --check packages/native-host/src/*.js && node --check packages/extension/*.js"
   },
   "engines": {
     "node": ">=18"

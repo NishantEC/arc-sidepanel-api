@@ -277,6 +277,21 @@ function patchExtension({ sourceDir, outputDir, panelMode = 'overlay' }) {
     throw new Error(`Only Manifest V3 extensions are supported (found manifest_version ${manifest.manifest_version}).`);
   }
 
+  // Patching a patched copy points the generated entry at itself
+  // (importScripts('../arc_polyfill/service-worker-entry.js')), which is an
+  // infinite import rather than a loud failure. Easy to do by accident once a
+  // patched build is sitting next to the original.
+  const background = manifest.background || {};
+  if (
+    String(manifest.version_name || '').includes('(arc-patched)') ||
+    String(background.service_worker || '').startsWith(`${POLYFILL_DIR}/`)
+  ) {
+    throw new Error(
+      `${sourceDir} is already an arc-patched extension. Patch the original installed ` +
+        'extension instead - patching a patched copy produces a service worker that imports itself.'
+    );
+  }
+
   const detection = detectSidePanelUsage(manifest);
   if (!detection.usesSidePanel) {
     throw new Error(
